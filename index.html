@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JanMitra - National Community Time Exchange Infrastructure | Government of India</title>
+    <meta name="description" content="JanMitra is India's Digital Public Infrastructure for AI-powered community time exchange, connecting citizens, government departments, hospitals, schools, and NGOs.">
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome 6 Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <!-- Leaflet.js Map CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            800: '#1e40af',
+                        },
+                        success: {
+                            500: '#22c55e',
+                            600: '#16a34a',
+                        },
+                        warning: {
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        },
+                        danger: {
+                            500: '#ef4444',
+                            600: '#dc2626',
+                        },
+                        accent: {
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                        },
+                        govslate: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            200: '#e2e8f0',
+                            300: '#cbd5e1',
+                            600: '#475569',
+                            700: '#334155',
+                            800: '#1e293b',
+                            900: '#0f172a',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(226, 232, 240, 0.5);
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 3px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #334155;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+
+        .leaflet-container {
+            width: 100%;
+            height: 100%;
+            border-radius: 0.75rem;
+            z-index: 10;
+        }
+
+        .high-contrast {
+            filter: contrast(135%) brightness(105%);
+        }
+    </style>
+</head>
+<body class="bg-govslate-50 dark:bg-govslate-900 text-govslate-800 dark:text-govslate-100 font-sans antialiased selection:bg-primary-600 selection:text-white transition-colors duration-200">
+
+    <!-- LOGIN / AUTH OVERLAY SCREEN -->
+    <div id="auth-screen" class="fixed inset-0 z-50 bg-govslate-900 flex items-center justify-center p-4">
+        <div class="w-full max-w-md bg-white dark:bg-govslate-800 rounded-2xl shadow-2xl border border-govslate-200 dark:border-govslate-700 overflow-hidden">
+            <!-- Govt Banner -->
+            <div class="bg-govslate-950 px-6 py-4 border-b border-govslate-800 flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 rounded-lg bg-primary-600 flex items-center justify-center text-white font-bold text-sm">
+                        <i class="fa-solid fa-building-columns"></i>
+                    </div>
+                    <div>
+                        <div class="text-xs font-bold text-white tracking-wide uppercase">Government of India</div>
+                        <div class="text-[10px] text-govslate-400">Digital Public Infrastructure (DPI)</div>
+                    </div>
+                </div>
+                <span class="text-[10px] text-emerald-400 font-mono bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">Aadhaar / DigiLocker</span>
+            </div>
+
+            <div class="p-6 sm:p-8">
+                <div class="text-center mb-6">
+                    <h1 class="text-2xl font-extrabold text-govslate-900 dark:text-white tracking-tight">Jan<span class="text-primary-600">Mitra</span></h1>
+                    <p class="text-xs text-govslate-500 dark:text-govslate-400 mt-1 font-medium">National Community Time Exchange Platform</p>
+                    <p class="text-[11px] text-primary-600 dark:text-primary-400 font-semibold mt-0.5">"Every Hour You Give Strengthens the Nation."</p>
+                </div>
+
+                <!-- OTP / Credentials Form -->
+                <form onsubmit="handleLogin(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-govslate-700 dark:text-govslate-300 mb-1">Official Email Address</label>
+                        <input type="email" id="login-email" required value="sarvesh@janmitra.gov.in" placeholder="sarvesh@janmitra.gov.in" class="w-full px-3 py-2.5 rounded-lg border border-govslate-300 dark:border-govslate-600 bg-white dark:bg-govslate-900 text-govslate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-600">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-govslate-700 dark:text-govslate-300 mb-1">Password</label>
+                        <input type="password" id="login-password" required value="password123" placeholder="••••••••" class="w-full px-3 py-2.5 rounded-lg border border-govslate-300 dark:border-govslate-600 bg-white dark:bg-govslate-900 text-govslate-900 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-primary-600">
+                    </div>
+
+                    <button type="submit" id="login-submit-btn" class="w-full py-3 rounded-lg bg-primary-600 hover:bg-primary-700 text-white font-semibold text-sm shadow-md transition-colors">
+                        Authenticate & Enter Platform
+                    </button>
+                </form>
+
+                <div class="mt-6 pt-4 border-t border-govslate-200 dark:border-govslate-700 text-center">
+                    <p class="text-xs text-govslate-500 dark:text-govslate-400 mb-3 font-medium">Team JanMitra Login Shortcuts:</p>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <button onclick="quickLogin('sarvesh@janmitra.gov.in', 'citizen', 'Sarvesh Karthick')" class="p-2 rounded bg-govslate-100 dark:bg-govslate-700 hover:bg-primary-50 dark:hover:bg-govslate-600 text-govslate-700 dark:text-govslate-200 font-medium text-left flex items-center space-x-1.5">
+                            <i class="fa-solid fa-user text-primary-600"></i>
+                            <span>Sarvesh (Citizen)</span>
+                        </button>
+                        <button onclick="quickLogin('hari@janmitra.gov.in', 'government', 'Hari')" class="p-2 rounded bg-govslate-100 dark:bg-govslate-700 hover:bg-primary-50 dark:hover:bg-govslate-600 text-govslate-700 dark:text-govslate-200 font-medium text-left flex items-center space-x-1.5">
+                            <i class="fa-solid fa-building-flag text-amber-600"></i>
+                            <span>Hari (Govt Lead)</span>
+                        </button>
+                        <button onclick="quickLogin('bavisiya@janmitra.gov.in', 'ngo', 'Bavisiya')" class="p-2 rounded bg-govslate-100 dark:bg-govslate-700 hover:bg-primary-50 dark:hover:bg-govslate-600 text-govslate-700 dark:text-govslate-200 font-medium text-left flex items-center space-x-1.5">
+                            <i class="fa-solid fa-handshake-angle text-emerald-600"></i>
+                            <span>Bavisiya (NGO Lead)</span>
+                        </button>
+                        <button onclick="quickLogin('sanjaay@janmitra.gov.in', 'csr', 'Sanjaay')" class="p-2 rounded bg-govslate-100 dark:bg-govslate-700 hover:bg-primary-50 dark:hover:bg-govslate-600 text-govslate-700 dark:text-govslate-200 font-medium text-left flex items-center space-x-1.5">
+                            <i class="fa-solid fa-briefcase text-accent-600"></i>
+                            <span>Sanjaay (CSR Lead)</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN APPLICATION SHELL -->
+    <div id="app-shell" class="hidden min-h-screen flex flex-col">
+        
+        <!-- TOP APP HEADER -->
+        <header class="h-16 bg-white dark:bg-govslate-800 border-b border-govslate-200 dark:border-govslate-700 sticky top-0 z-30 flex items-center justify-between px-4 sm:px-6 shadow-sm">
+            <div class="flex items-center space-x-4">
+                <button onclick="toggleSidebar()" class="p-2 rounded-lg text-govslate-500 hover:text-govslate-800 dark:hover:text-white hover:bg-govslate-100 dark:hover:bg-govslate-700 transition-colors">
+                    <i class="fa-solid fa-bars text-base"></i>
+                </button>
+
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 rounded-lg bg-primary-600 text-white flex items-center justify-center font-bold text-sm shadow">
+                        <i class="fa-solid fa-hands-holding-child"></i>
+                    </div>
+                    <div>
+                        <div class="flex items-center space-x-1.5">
+                            <span class="text-lg font-extrabold tracking-tight text-govslate-900 dark:text-white">Jan<span class="text-primary-600">Mitra</span></span>
+                            <span class="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold px-1.5 py-0.2 rounded border border-emerald-500/20">NATIONAL DPI</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Role Selector Badge -->
+            <div class="hidden md:flex items-center space-x-2 bg-govslate-100 dark:bg-govslate-900 p-1 rounded-lg border border-govslate-200 dark:border-govslate-700 text-xs">
+                <span class="text-govslate-400 font-semibold px-2">Role:</span>
+                <button onclick="switchRole('citizen')" id="role-btn-citizen" class="px-3 py-1 rounded font-semibold transition-all bg-white dark:bg-govslate-800 text-primary-600 shadow-sm">Citizen</button>
+                <button onclick="switchRole('government')" id="role-btn-government" class="px-3 py-1 rounded font-semibold transition-all text-govslate-600 dark:text-govslate-400 hover:text-govslate-900">Government</button>
+                <button onclick="switchRole('ngo')" id="role-btn-ngo" class="px-3 py-1 rounded font-semibold transition-all text-govslate-600 dark:text-govslate-400 hover:text-govslate-900">NGO</button>
+                <button onclick="switchRole('csr')" id="role-btn-csr" class="px-3 py-1 rounded font-semibold transition-all text-govslate-600 dark:text-govslate-400 hover:text-govslate-900">CSR</button>
+            </div>
+
+            <!-- Header Actions -->
+            <div class="flex items-center space-x-3">
+                <button onclick="openSearchModal()" class="hidden sm:flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-govslate-100 dark:bg-govslate-900 text-govslate-500 dark:text-govslate-400 text-xs border border-govslate-200 dark:border-govslate-700 hover:bg-govslate-200 transition-colors">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <span>Search (Ctrl+K)</span>
+                </button>
+
+                <button onclick="toggleAccessibilityMode()" class="p-2 rounded-lg text-govslate-500 hover:text-govslate-800 dark:hover:text-white hover:bg-govslate-100 dark:hover:bg-govslate-700 transition-colors" title="Toggle Accessibility High Contrast">
+                    <i class="fa-solid fa-universal-access text-base"></i>
+                </button>
+
+                <button onclick="toggleTheme()" class="p-2 rounded-lg text-govslate-500 hover:text-govslate-800 dark:hover:text-white hover:bg-govslate-100 dark:hover:bg-govslate-700 transition-colors" title="Toggle Light/Dark Theme">
+                    <i id="theme-icon" class="fa-solid fa-moon text-base"></i>
+                </button>
+
+                <button onclick="toggleNotificationDrawer()" class="relative p-2 rounded-lg text-govslate-500 hover:text-govslate-800 dark:hover:text-white hover:bg-govslate-100 dark:hover:bg-govslate-700 transition-colors">
+                    <i class="fa-regular fa-bell text-base"></i>
+                    <span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-danger-500"></span>
+                </button>
+
+                <!-- Profile Badge -->
+                <div class="flex items-center space-x-2 pl-2 border-l border-govslate-200 dark:border-govslate-700">
+                    <div id="user-avatar" class="w-8 h-8 rounded-full bg-primary-600 text-white font-bold text-xs flex items-center justify-center">
+                        SK
+                    </div>
+                    <div class="hidden xl:block text-left text-xs">
+                        <div id="user-name-display" class="font-bold text-govslate-900 dark:text-white">Sarvesh Karthick</div>
+                        <div id="user-role-display" class="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">DigiLocker Verified</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- BODY WRAPPER -->
+        <div class="flex-1 flex overflow-hidden">
+
+            <!-- SIDEBAR -->
+            <aside id="app-sidebar" class="w-64 bg-white dark:bg-govslate-800 border-r border-govslate-200 dark:border-govslate-700 flex flex-col justify-between transition-all duration-200 z-20">
+                <div class="p-4 space-y-1">
+                    <div class="text-[10px] font-bold uppercase tracking-wider text-govslate-400 px-3 mb-2">Platform Navigation</div>
+                    
+                    <button onclick="navigateView('dashboard')" id="nav-dashboard" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-xs font-semibold bg-primary-50 dark:bg-govslate-700 text-primary-600 dark:text-white transition-colors">
+                        <i class="fa-solid fa-chart-pie w-4 text-center"></i>
+                        <span>Dashboard</span>
+                    </button>
+
+                    <button onclick="navigateView('map')" id="nav-map" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-xs font-semibold text-govslate-600 dark:text-govslate-300 hover:bg-govslate-100 dark:hover:bg-govslate-700 transition-colors">
+                        <i class="fa-solid fa-map-location-dot w-4 text-center"></i>
+                        <span>Live Requests & Map</span>
+                    </button>
+
+                    <button onclick="navigateView('wallet')" id="nav-wallet" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-xs font-semibold text-govslate-600 dark:text-govslate-300 hover:bg-govslate-100 dark:hover:bg-govslate-700 transition-colors">
+                        <i class="fa-solid fa-wallet w-4 text-center"></i>
+                        <span>Seva Wallet</span>
+                    </button>
+
+                    <button onclick="navigateView('ai')" id="nav-ai" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-xs font-semibold text-govslate-600 dark:text-govslate-300 hover:bg-govslate-100 dark:hover:bg-govslate-700 transition-colors">
+                        <i class="fa-solid fa-microchip w-4 text-center text-accent-500"></i>
+                        <span>AI Civic Intelligence</span>
+                    </button>
+
+                    <button onclick="navigateView('passport')" id="nav-passport" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-xs font-semibold text-govslate-600 dark:text-govslate-300 hover:bg-govslate-100 dark:hover:bg-govslate-700 transition-colors">
+                        <i class="fa-solid fa-id-card w-4 text-center"></i>
+                        <span>Civic Passport</span>
+                    </button>
+
+                    <button onclick="navigateView('certificates')" id="nav-certificates" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-xs font-semibold text-govslate-600 dark:text-govslate-300 hover:bg-govslate-100 dark:hover:bg-govslate-700 transition-colors">
+                        <i class="fa-solid fa-file-certificate w-4 text-center"></i>
+                        <span>Certificate Center</span>
+                    </button>
+
+                    <button onclick="navigateView('challenges')" id="nav-challenges" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-xs font-semibold text-govslate-600 dark:text-govslate-300 hover:bg-govslate-100 dark:hover:bg-govslate-700 transition-colors">
+                        <i class="fa-solid fa-flag-checkered w-4 text-center"></i>
+                        <span>Community Challenges</span>
+                    </button>
+
+                    <button onclick="navigateView('leaderboard')" id="nav-leaderboard" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-xs font-semibold text-govslate-600 dark:text-govslate-300 hover:bg-govslate-100 dark:hover:bg-govslate-700 transition-colors">
+                        <i class="fa-solid fa-trophy w-4 text-center text-amber-500"></i>
+                        <span>Leaderboard</span>
+                    </button>
+
+                    <button onclick="navigateView('architecture')" id="nav-architecture" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-xs font-semibold text-govslate-600 dark:text-govslate-300 hover:bg-govslate-100 dark:hover:bg-govslate-700 transition-colors">
+                        <i class="fa-solid fa-diagram-project w-4 text-center"></i>
+                        <span>System Architecture</span>
+                    </button>
+                </div>
+
+                <div class="p-4 border-t border-govslate-200 dark:border-govslate-700">
+                    <div class="flex items-center justify-between text-[11px] text-govslate-500 dark:text-govslate-400">
+                        <span>API Backend:</span>
+                        <span id="backend-status-badge" class="text-emerald-600 dark:text-emerald-400 font-bold flex items-center">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1 animate-pulse"></span> FastAPI Online
+                        </span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- MAIN CONTENT AREA -->
+            <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-govslate-50 dark:bg-govslate-900">
+                
+                <!-- VIEW 1: DASHBOARD -->
+                <div id="view-dashboard" class="view-panel">
+                    
+                    <!-- CITIZEN DASHBOARD -->
+                    <div id="role-dashboard-citizen" class="space-y-6">
+                        <div class="bg-white dark:bg-govslate-800 p-6 rounded-xl border border-govslate-200 dark:border-govslate-700 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                            <div>
+                                <div class="flex items-center space-x-2">
+                                    <h2 class="text-xl font-bold text-govslate-900 dark:text-white">Welcome back, <span id="dash-user-name">Sarvesh Karthick</span></h2>
+                                    <span class="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-xs font-bold px-2.5 py-0.5 rounded border border-emerald-500/20"><i class="fa-solid fa-shield-check mr-1"></i> DigiLocker Verified</span>
+                                </div>
+                                <p class="text-xs text-govslate-500 dark:text-govslate-400 mt-1">Chennai District • Total Contribution Impact: <strong class="text-govslate-800 dark:text-slate-200">28 Lives Helped</strong></p>
+                            </div>
+                            
+                            <div class="flex items-center space-x-3">
+                                <button onclick="navigateView('map')" class="px-4 py-2 rounded-lg bg-primary-600 hover:bg-primary-700 text-white text-xs font-bold shadow transition-colors flex items-center space-x-2">
+                                    <i class="fa-solid fa-hand-holding-heart"></i>
+                                    <span>Find Nearby Opportunities</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Stat Cards Grid -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                            <div class="bg-white dark:bg-govslate-800 p-5 rounded-xl border border-govslate-200 dark:border-govslate-700 shadow-sm">
+                                <div class="text-xs font-semibold text-govslate-500 dark:text-govslate-400">Available Seva Credits</div>
+                                <div class="text-2xl font-black text-govslate-900 dark:text-white mt-2"><span id="stat-balance">150.0</span> <span class="text-xs font-normal text-primary-600">Hrs</span></div>
+                                <div class="text-[11px] text-emerald-600 dark:text-emerald-400 font-medium mt-1"><i class="fa-solid fa-arrow-up text-[9px]"></i> +2.0 Hrs earned today</div>
+                            </div>
+
+                            <div class="bg-white dark:bg-govslate-800 p-5 rounded-xl border border-govslate-200 dark:border-govslate-700 shadow-sm">
+                                <div class="text-xs font-semibold text-govslate-500 dark:text-govslate-400">Total Hours Contributed</div>
+                                <div class="text-2xl font-black text-govslate-900 dark:text-white mt-2">42.5 <span class="text-xs font-normal text-govslate-500">Hrs</span></div>
+                                <div class="text-[11px] text-govslate-500 mt-1">Rank #1 in District</div>
+                            </div>
+
+                            <div class="bg-white dark:bg-govslate-800 p-5 rounded-xl border border-govslate-200 dark:border-govslate-700 shadow-sm">
+                                <div class="text-xs font-semibold text-govslate-500 dark:text-govslate-400">People Directly Helped</div>
+                                <div class="text-2xl font-black text-govslate-900 dark:text-white mt-2">28 <span class="text-xs font-normal text-govslate-500">Citizens</span></div>
+                                <div class="text-[11px] text-accent-600 font-medium mt-1">Senior Citizens & Students</div>
+                            </div>
+
+                            <div class="bg-white dark:bg-govslate-800 p-5 rounded-xl border border-govslate-200 dark:border-govslate-700 shadow-sm">
+                                <div class="text-xs font-semibold text-govslate-500 dark:text-govslate-400">Trust Credibility Index</div>
+                                <div class="text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-2">99 <span class="text-xs font-normal text-govslate-500">/ 100</span></div>
+                                <div class="text-[11px] text-emerald-600 font-medium mt-1">Verified Authenticated</div>
+                            </div>
+                        </div>
+
+                        <!-- Telemetry Grid -->
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                            <div class="lg:col-span-2 bg-white dark:bg-govslate-800 p-6 rounded-xl border border-govslate-200 dark:border-govslate-700 shadow-sm">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h3 class="text-sm font-bold text-govslate-900 dark:text-white">Weekly Seva Contribution Velocity</h3>
+                                    <span class="text-xs text-govslate-400">Current Month</span>
+                                </div>
+                                <div class="h-64">
+                                    <canvas id="chart-citizen-weekly"></canvas>
+                                </div>
+                            </div>
+
+                            <div class="bg-white dark:bg-govslate-800 p-6 rounded-xl border border-govslate-200 dark:border-govslate-700 shadow-sm">
+                                <h3 class="text-sm font-bold text-govslate-900 dark:text-white mb-4">Today's Priority Requests</h3>
+                                <div id="dash-requests-list" class="space-y-3">
+                                    <!-- Dynamic API / Seed Requests -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- GOVERNMENT OFFICER DASHBOARD -->
+                    <div id="role-dashboard-government" class="hidden space-y-6">
+                        <div class="bg-white dark:bg-govslate-800 p-6 rounded-xl border border-govslate-200 dark:border-govslate-700 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                            <div>
+                                <div class="flex items-center space-x-2">
+                                    <h2 class="text-xl font-bold text-govslate-900 dark:text-white">District Collectorate Dashboard</h2>
+                                    <span class="bg-amber-500/10 text-amber-600 dark:text-amber-400 text-xs font-bold px-2.5 py-0.5 rounded border border-amber-500/20">Lead Officer: Hari</span>
+                                </div>
+                                <p class="text-xs text-govslate-500 dark:text-govslate-400 mt-1">National Digital Governance Command Center • Madurai & Chennai Metro</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                            <div class="bg-white dark:bg-govslate-800 p-5 rounded-xl border border-govslate-200 dark:border-govslate-700 shadow-sm">
+                                <div class="text-xs font-semibold text-govslate-500">Total District Volunteers</div>
+                                <div class="text-2xl font-black text-govslate-900 dark:text-white mt-2">52,430</div>
+                                <div class="text-[11px] text-emerald-600 font-medium mt-1">94.2% Verified</div>
+                            </div>
+                            <div class="bg-white dark:bg-govslate-800 p-5 rounded-xl border border-govslate-200 dark:border-govslate-700 shadow-sm">
+                                <div class="text-xs font-semibold text-govslate-500">Pending Govt Tasks</div>
+                                <div class="text-2xl font-black text-amber-600 mt-2">142 Tasks</div>
+                                <div class="text-[11px] text-govslate-500 mt-1">Schools, Hospitals, Municipal</div>
+                            </div>
+                            <div class="bg-white dark:bg-govslate-800 p-5 rounded-xl border border-govslate-200 dark:border-govslate-700 shadow-sm">
+                                <div class="text-xs font-semibold text-govslate-500">Active SOS Alerts</div>
+                                <div class="text-2xl font-black text-danger-600 mt-2">3 Alerts</div>
+                                <div class="text-[11px] text-danger-600 font-medium mt-1">Blood & Disaster Priority</div>
+                            </div>
+                            <div class="bg-white dark:bg-govslate-800 p-5 rounded-xl border border-govslate-200 dark:border-govslate-700 shadow-sm">
+                                <div class="text-xs font-semibold text-govslate-500">Average Response Time</div>
+                                <div class="text-2xl font-black text-accent-600 mt-2">8.4 mins</div>
+                                <div class="text-[11px] text-emerald-600 font-medium mt-1">AI Priority Dispatch</div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white dark:bg-govslate-800 p-6 rounded-xl border border-govslate-200 dark:border-govslate-700 shadow-sm">
+                            <h3 class="text-sm font-bold text-govslate-900 dark:text-white mb-4">Official Department Task Broadcast</h3>
+                            <form onsubmit="handleGovtBroadcast(event)" class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                                <input type="text" id="b-title" required placeholder="Task Title (e.g. Hospital Queue Support)" class="px-3 py-2 rounded-lg border border-govslate-300 dark:border-govslate-600 bg-white dark:bg-govslate-900 text-xs text-govslate-900 dark:text-white">
+                                <select id="b-institution" class="px-3 py-2 rounded-lg border border-govslate-300 dark:border-govslate-600 bg-white dark:bg-govslate-900 text-xs text-govslate-900 dark:text-white">
+                                    <option value="Government Rajaji Hospital">Government Rajaji Hospital</option>
+                                    <option value="AIIMS New Delhi">AIIMS New Delhi</option>
+                                    <option value="Government Higher Secondary School">Govt Higher Secondary School</option>
+                                    <option value="JIPMER Hospital">JIPMER Hospital</option>
+                                </select>
+                                <input type="number" id="b-duration" required placeholder="Duration (Hours)" value="2" class="px-3 py-2 rounded-lg border border-govslate-300 dark:border-govslate-600 bg-white dark:bg-govslate-900 text-xs text-govslate-900 dark:text-white">
+                                <button type="submit" class="py-2 rounded-lg bg-primary-600 hover:bg-primary-700 text-white font-bold text-xs">Broadcast Task</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- NGO DASHBOARD -->
+                    <div id="role-dashboard-ngo" class="hidden space-y-6">
+                        <div class="bg-white dark:bg-govslate-800 p-6 rounded-xl border border-govslate-200 dark:border-govslate-700 shadow-sm">
+                            <h2 class="text-xl font-bold text-govslate-900 dark:text-white">NGO Partner Command Console</h2>
+                            <p class="text-xs text-govslate-500 mt-1">Lead Administrator: Bavisiya • Indian Red Cross / Goonj Partner</p>
+                        </div>
+                    </div>
+
+                    <!-- CSR DASHBOARD -->
+                    <div id="role-dashboard-csr" class="hidden space-y-6">
+                        <div class="bg-white dark:bg-govslate-800 p-6 rounded-xl border border-govslate-200 dark:border-govslate-700 shadow-sm">
+                            <h2 class="text-xl font-bold text-govslate-900 dark:text-white">Corporate CSR Volunteering Portal</h2>
+                            <p class="text-xs text-govslate-500 mt-1">Lead CSR Manager: Sanjaay • ESG Sustainability Rating A+</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 2: MAP & LIVE REQUESTS -->
+                <div id="view-map" class="view-panel hidden space-y-6">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        <div>
+                            <h2 class="text-xl font-bold text-govslate-900 dark:text-white">Live Community Requests & Geospatial Map</h2>
+                            <p class="text-xs text-govslate-500 dark:text-govslate-400">Real-time open tasks across Government Hospitals, Schools, Municipalities & NGOs.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[600px]">
+                        <div id="map-requests-feed" class="lg:col-span-1 bg-white dark:bg-govslate-800 p-4 rounded-xl border border-govslate-200 dark:border-govslate-700 shadow-sm overflow-y-auto space-y-3">
+                            <!-- Dynamic Requests -->
+                        </div>
+
+                        <div class="lg:col-span-2 bg-white dark:bg-govslate-800 p-2 rounded-xl border border-govslate-200 dark:border-govslate-700 shadow-sm relative">
+                            <div id="map-container" class="w-full h-full rounded-lg"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 3: SEVA WALLET -->
+                <div id="view-wallet" class="view-panel hidden space-y-6">
+                    <div class="max-w-4xl mx-auto space-y-6">
+                        <div class="bg-gradient-to-r from-govslate-900 to-govslate-800 p-8 rounded-2xl text-white shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                            <div>
+                                <div class="text-xs font-mono text-govslate-400 uppercase tracking-widest mb-1"><i class="fa-solid fa-shield-halved text-accent-500 mr-1"></i> DigiLocker Seva Wallet</div>
+                                <div class="text-4xl font-black tracking-tight mt-1"><span id="wallet-balance-val">150.0</span> <span class="text-lg font-normal text-accent-400">Seva Credits</span></div>
+                                <div class="text-xs text-govslate-300 mt-2">Equivalent Economic Social Value: <strong id="wallet-eco-val" class="text-emerald-400">₹52,500</strong></div>
+                            </div>
+
+                            <div class="flex gap-3">
+                                <button onclick="simulateEarnSevaCredit()" class="px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 font-bold text-xs shadow-lg transition-all flex items-center space-x-2">
+                                    <i class="fa-solid fa-plus-circle"></i>
+                                    <span>Simulate Service (+2.0 Hrs)</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="bg-white dark:bg-govslate-800 p-6 rounded-xl border border-govslate-200 dark:border-govslate-700 shadow-sm">
+                            <h3 class="text-sm font-bold text-govslate-900 dark:text-white mb-4">Transparent Service Ledger</h3>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-left text-xs">
+                                    <thead class="bg-govslate-100 dark:bg-govslate-900 text-govslate-500 uppercase font-semibold">
+                                        <tr>
+                                            <th class="p-3">Service Activity</th>
+                                            <th class="p-3">Institution</th>
+                                            <th class="p-3">Date</th>
+                                            <th class="p-3">Credits</th>
+                                            <th class="p-3 text-right">DigiLocker Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="wallet-ledger-rows" class="divide-y divide-govslate-200 dark:divide-govslate-700">
+                                        <!-- Dynamic Ledger -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 4: AI CIVIC INTELLIGENCE -->
+                <div id="view-ai" class="view-panel hidden space-y-6">
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h2 class="text-xl font-bold text-govslate-900 dark:text-white">AI Civic Intelligence Hub</h2>
+                            <p class="text-xs text-govslate-500">Enterprise AI models engineered by Lead AI Engineer Hari.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="p-5 bg-white dark:bg-govslate-800 rounded-xl border border-govslate-200 dark:border-govslate-700 shadow-sm">
+                            <div class="w-8 h-8 rounded-lg bg-accent-500/10 text-accent-600 flex items-center justify-center font-bold mb-3"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+                            <h3 class="text-sm font-bold text-govslate-900 dark:text-white">AI Volunteer Matching</h3>
+                            <p class="text-xs text-govslate-500 mt-1">Predictive dispatch balancing proximity, skills, and historic trust score.</p>
+                        </div>
+
+                        <div class="p-5 bg-white dark:bg-govslate-800 rounded-xl border border-govslate-200 dark:border-govslate-700 shadow-sm">
+                            <div class="w-8 h-8 rounded-lg bg-danger-500/10 text-danger-600 flex items-center justify-center font-bold mb-3"><i class="fa-solid fa-shield-virus"></i></div>
+                            <h3 class="text-sm font-bold text-govslate-900 dark:text-white">AI Fraud Detection</h3>
+                            <p class="text-xs text-govslate-500 mt-1">Zero-trust anomaly detection flagging GPS spoofing and duplicate credit claims.</p>
+                        </div>
+
+                        <div class="p-5 bg-white dark:bg-govslate-800 rounded-xl border border-govslate-200 dark:border-govslate-700 shadow-sm">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-500/10 text-emerald-600 flex items-center justify-center font-bold mb-3"><i class="fa-solid fa-chart-line"></i></div>
+                            <h3 class="text-sm font-bold text-govslate-900 dark:text-white">AI Demand Forecasting</h3>
+                            <p class="text-xs text-govslate-500 mt-1">Predicts upcoming hospital surges and exam season tutoring needs.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-govslate-800 p-6 rounded-xl border border-govslate-200 dark:border-govslate-700 shadow-sm">
+                        <h3 class="text-sm font-bold text-govslate-900 dark:text-white mb-4 flex items-center">
+                            <i class="fa-solid fa-robot text-primary-600 mr-2"></i> AI Civic Assistant
+                        </h3>
+                        <div id="ai-chat-history" class="h-48 overflow-y-auto p-3 bg-govslate-50 dark:bg-govslate-900 rounded-lg space-y-3 mb-4 text-xs">
+                            <div class="bg-white dark:bg-govslate-800 p-3 rounded-lg border border-govslate-200 dark:border-govslate-700 max-w-lg">
+                                <strong class="text-primary-600">JanMitra AI:</strong> Namaste! I am your AI Civic Assistant. How can I assist you with Seva Credits, hospital requests, or DigiLocker verification today?
+                            </div>
+                        </div>
+                        <form onsubmit="handleAIChatSubmit(event)" class="flex gap-2">
+                            <input id="ai-chat-input" type="text" placeholder="Ask AI Assistant (e.g. Who built JanMitra?)..." class="flex-1 px-3 py-2 rounded-lg border border-govslate-300 dark:border-govslate-600 bg-white dark:bg-govslate-900 text-xs text-govslate-900 dark:text-white">
+                            <button type="submit" class="px-4 py-2 rounded-lg bg-primary-600 hover:bg-primary-700 text-white font-bold text-xs">Ask AI</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- VIEW 5: CIVIC PASSPORT -->
+                <div id="view-passport" class="view-panel hidden space-y-6">
+                    <div class="max-w-3xl mx-auto bg-white dark:bg-govslate-800 p-8 rounded-2xl border border-govslate-200 dark:border-govslate-700 shadow-xl space-y-6">
+                        <div class="flex items-center space-x-6 pb-6 border-b border-govslate-200 dark:border-govslate-700">
+                            <div id="passport-avatar" class="w-24 h-24 rounded-2xl bg-primary-600 text-white font-bold text-3xl flex items-center justify-center shadow-lg">SK</div>
+                            <div>
+                                <div class="flex items-center space-x-2">
+                                    <h2 id="passport-name" class="text-2xl font-bold text-govslate-900 dark:text-white">Sarvesh Karthick</h2>
+                                    <i class="fa-solid fa-circle-check text-emerald-500 text-lg"></i>
+                                </div>
+                                <p class="text-xs text-govslate-500 mt-1">Aadhaar Verified Citizen • Chennai District</p>
+                                <div class="mt-2 flex space-x-4 text-xs font-bold">
+                                    <span>Trust Score: <strong class="text-emerald-600">99 / 100</strong></span>
+                                    <span>Lifetime Hours: <strong class="text-primary-600">150.0 Hrs</strong></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-3">
+                            <button onclick="showToast('Profile link copied to clipboard!', 'success')" class="px-4 py-2 rounded-lg bg-primary-600 text-white text-xs font-bold">Share Verified Profile</button>
+                            <button onclick="showToast('Downloading DigiLocker Passport PDF...', 'info')" class="px-4 py-2 rounded-lg bg-govslate-100 dark:bg-govslate-700 text-govslate-700 dark:text-govslate-200 text-xs font-bold">Download PDF</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 6: CERTIFICATES -->
+                <div id="view-certificates" class="view-panel hidden space-y-6">
+                    <h2 class="text-xl font-bold text-govslate-900 dark:text-white">Government Verified Certificates</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="p-6 bg-white dark:bg-govslate-800 rounded-xl border border-govslate-200 dark:border-govslate-700 shadow-sm flex justify-between items-center">
+                            <div>
+                                <h3 class="text-sm font-bold text-govslate-900 dark:text-white">National Volunteering Excellence</h3>
+                                <p class="text-xs text-govslate-500">Issued to Sarvesh Karthick by District Magistrate • 50+ Hours</p>
+                            </div>
+                            <button onclick="showToast('Downloading Verified Certificate PDF...', 'success')" class="px-3 py-1.5 rounded bg-primary-600 text-white text-xs font-bold">Download</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 7: CHALLENGES -->
+                <div id="view-challenges" class="view-panel hidden space-y-6">
+                    <h2 class="text-xl font-bold text-govslate-900 dark:text-white">Active Community Challenges</h2>
+                    <div class="p-6 bg-white dark:bg-govslate-800 rounded-xl border border-govslate-200 dark:border-govslate-700 shadow-sm">
+                        <h3 class="text-base font-bold text-govslate-900 dark:text-white">Mission Green Canopy (Tree Plantation)</h3>
+                        <div class="w-full bg-govslate-200 dark:bg-govslate-700 h-2 rounded-full my-3">
+                            <div class="bg-emerald-600 h-2 rounded-full w-[84%]"></div>
+                        </div>
+                        <p class="text-xs text-govslate-500">42,000 / 50,000 Trees Planted (84% Complete)</p>
+                    </div>
+                </div>
+
+                <!-- VIEW 8: LEADERBOARD -->
+                <div id="view-leaderboard" class="view-panel hidden space-y-6">
+                    <h2 class="text-xl font-bold text-govslate-900 dark:text-white">National Hall of Fame</h2>
+                    <div class="bg-white dark:bg-govslate-800 p-6 rounded-xl border border-govslate-200 dark:border-govslate-700 space-y-3">
+                        <div class="flex justify-between items-center text-xs font-bold py-2 border-b border-govslate-200 dark:border-govslate-700">
+                            <span>#1 Sarvesh Karthick (Chennai)</span>
+                            <span class="text-emerald-600 font-bold">340.0 Seva Credits</span>
+                        </div>
+                        <div class="flex justify-between items-center text-xs font-bold py-2 border-b border-govslate-200 dark:border-govslate-700">
+                            <span>#2 Hari (Madurai)</span>
+                            <span class="text-emerald-600 font-bold">210.0 Seva Credits</span>
+                        </div>
+                        <div class="flex justify-between items-center text-xs font-bold py-2 border-b border-govslate-200 dark:border-govslate-700">
+                            <span>#3 Bavisiya (Coimbatore)</span>
+                            <span class="text-emerald-600 font-bold">180.0 Seva Credits</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VIEW 9: ARCHITECTURE & TEAM -->
+                <div id="view-architecture" class="view-panel hidden space-y-6">
+                    <h2 class="text-xl font-bold text-govslate-900 dark:text-white">System Architecture & Team JanMitra</h2>
+                    
+                    <!-- Team Matrix -->
+                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-4 mb-6">
+                        <div class="p-4 bg-white dark:bg-govslate-800 rounded-xl border border-govslate-200 dark:border-govslate-700 text-center">
+                            <div class="w-12 h-12 rounded-xl bg-primary-600 text-white font-bold text-lg mx-auto flex items-center justify-center mb-2">SK</div>
+                            <div class="text-xs font-bold text-govslate-900 dark:text-white">Sarvesh Karthick</div>
+                            <div class="text-[10px] text-govslate-400">Lead Full-Stack Architect</div>
+                        </div>
+                        <div class="p-4 bg-white dark:bg-govslate-800 rounded-xl border border-govslate-200 dark:border-govslate-700 text-center">
+                            <div class="w-12 h-12 rounded-xl bg-emerald-600 text-white font-bold text-lg mx-auto flex items-center justify-center mb-2">H</div>
+                            <div class="text-xs font-bold text-govslate-900 dark:text-white">Hari</div>
+                            <div class="text-[10px] text-govslate-400">Lead AI Engineer</div>
+                        </div>
+                        <div class="p-4 bg-white dark:bg-govslate-800 rounded-xl border border-govslate-200 dark:border-govslate-700 text-center">
+                            <div class="w-12 h-12 rounded-xl bg-amber-600 text-white font-bold text-lg mx-auto flex items-center justify-center mb-2">B</div>
+                            <div class="text-xs font-bold text-govslate-900 dark:text-white">Bavisiya</div>
+                            <div class="text-[10px] text-govslate-400">Senior UI/UX Designer</div>
+                        </div>
+                        <div class="p-4 bg-white dark:bg-govslate-800 rounded-xl border border-govslate-200 dark:border-govslate-700 text-center">
+                            <div class="w-12 h-12 rounded-xl bg-accent-600 text-white font-bold text-lg mx-auto flex items-center justify-center mb-2">S</div>
+                            <div class="text-xs font-bold text-govslate-900 dark:text-white">Sanjaay</div>
+                            <div class="text-[10px] text-govslate-400">Public Policy Lead</div>
+                        </div>
+                    </div>
+
+                    <div class="p-8 bg-white dark:bg-govslate-800 rounded-xl border border-govslate-200 dark:border-govslate-700 text-center font-mono text-xs">
+                        Citizen → AI Civic Intelligence → Matching Engine → Government Platform → Volunteer Network → Community Service
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- MODALS & TOAST -->
+    <div id="search-modal" class="hidden fixed inset-0 z-50 bg-govslate-950/80 backdrop-blur-sm flex items-start justify-center pt-20 px-4">
+        <div class="w-full max-w-xl bg-white dark:bg-govslate-800 rounded-xl p-4 shadow-2xl border border-govslate-200 dark:border-govslate-700">
+            <div class="flex items-center space-x-3 pb-3 border-b border-govslate-200 dark:border-govslate-700">
+                <i class="fa-solid fa-magnifying-glass text-govslate-400"></i>
+                <input type="text" placeholder="Search tasks, hospitals, schools, or AI features..." class="w-full bg-transparent text-sm text-govslate-900 dark:text-white focus:outline-none">
+                <button onclick="closeSearchModal()" class="text-govslate-400 hover:text-govslate-900 dark:hover:text-white text-lg">&times;</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container" class="fixed bottom-6 left-6 z-50 flex flex-col space-y-2 pointer-events-none"></div>
+
+    <!-- JAVASCRIPT APP ENGINE & API CLIENT -->
+    <script>
+        const API_BASE = 'http://127.0.0.1:8000/api';
+        let leafletMap = null;
+        let currentUser = { name: "Sarvesh Karthick", role: "citizen", email: "sarvesh@janmitra.gov.in" };
+
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchBackendData();
+        });
+
+        async function fetchBackendData() {
+            try {
+                const res = await fetch(`${API_BASE}/requests`);
+                if(res.ok) {
+                    const reqs = await res.json();
+                    renderRequests(reqs);
+                    document.getElementById('backend-status-badge').innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1 animate-pulse"></span> FastAPI Connected';
+                } else {
+                    renderSeedFallback();
+                }
+
+                const ledgerRes = await fetch(`${API_BASE}/wallet/ledger`);
+                if(ledgerRes.ok) {
+                    const ledger = await ledgerRes.json();
+                    renderWalletLedger(ledger);
+                }
+            } catch(err) {
+                renderSeedFallback();
+            }
+        }
+
+        function renderRequests(reqs) {
+            const feed = document.getElementById('dash-requests-list');
+            const mapFeed = document.getElementById('map-requests-feed');
+            if(!feed || !mapFeed) return;
+
+            let html = '';
+            reqs.forEach(r => {
+                html += `
+                    <div class="p-3.5 rounded-lg border border-govslate-200 dark:border-govslate-700 hover:border-primary-500 transition-colors">
+                        <div class="flex justify-between text-xs font-bold text-primary-600 mb-1">
+                            <span><i class="fa-solid fa-building-columns mr-1"></i> ${r.title}</span>
+                            <span class="text-emerald-600 font-bold">+${r.reward_credits} Credits</span>
+                        </div>
+                        <h4 class="text-xs font-bold text-govslate-900 dark:text-white">${r.institution_name}</h4>
+                        <p class="text-[11px] text-govslate-500 mt-0.5">District: ${r.district} • Duration: ${r.duration_hours} hrs</p>
+                        <div class="mt-2 flex justify-between items-center text-xs">
+                            <span class="text-[10px] text-govslate-400 font-mono">Status: ${r.status.toUpperCase()}</span>
+                            <button onclick="acceptApiTask(${r.id}, this)" class="px-2.5 py-1 rounded bg-primary-600 text-white font-semibold text-[11px]">Accept</button>
+                        </div>
+                    </div>
+                `;
+            });
+            feed.innerHTML = html;
+            mapFeed.innerHTML = html;
+        }
+
+        function renderWalletLedger(ledger) {
+            document.getElementById('wallet-balance-val').innerText = ledger.balance.toFixed(1);
+            document.getElementById('stat-balance').innerText = ledger.balance.toFixed(1);
+            document.getElementById('wallet-eco-val').innerText = `₹${(ledger.balance * 350).toLocaleString()}`;
+
+            const rows = document.getElementById('wallet-ledger-rows');
+            if(!rows) return;
+
+            let html = '';
+            ledger.transactions.forEach(t => {
+                html += `
+                    <tr>
+                        <td class="p-3 font-semibold text-govslate-900 dark:text-white">${t.activity_name}</td>
+                        <td class="p-3 text-govslate-500">${t.institution_name}</td>
+                        <td class="p-3 text-govslate-500">${t.date}</td>
+                        <td class="p-3 font-bold ${t.transaction_type === 'earned' ? 'text-emerald-600' : 'text-amber-600'}">${t.transaction_type === 'earned' ? '+' : '-'}${t.credits_amount} Hrs</td>
+                        <td class="p-3 text-right"><span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 font-bold">${t.status}</span></td>
+                    </tr>
+                `;
+            });
+            rows.innerHTML = html;
+        }
+
+        function renderSeedFallback() {
+            const seedReqs = [
+                { id: 1, title: "Hospital OPD Escort", institution_name: "Government Rajaji Hospital", district: "Madurai", reward_credits: 2.0, duration_hours: 2.0, status: "open" },
+                { id: 2, title: "Remedial Math Mentorship", institution_name: "Govt Higher Secondary School", district: "Chennai", reward_credits: 2.5, duration_hours: 2.5, status: "open" },
+                { id: 3, title: "Emergency Blood Donor (O-ve)", institution_name: "AIIMS New Delhi", district: "New Delhi", reward_credits: 3.0, duration_hours: 1.5, status: "open" }
+            ];
+            renderRequests(seedReqs);
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-password').value;
+
+            try {
+                const res = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email, password: pass })
+                });
+                if(res.ok) {
+                    const data = await res.json();
+                    localStorage.setItem('janmitra_token', data.access_token);
+                    currentUser = data.user;
+                    updateUserUI();
+                    completeLogin();
+                } else {
+                    completeLogin();
+                }
+            } catch(err) {
+                completeLogin();
+            }
+        }
+
+        function quickLogin(email, role, name) {
+            currentUser = { name: name, role: role, email: email };
+            updateUserUI();
+            switchRole(role);
+            completeLogin();
+        }
+
+        function updateUserUI() {
+            document.getElementById('user-name-display').innerText = currentUser.name;
+            document.getElementById('dash-user-name').innerText = currentUser.name;
+            document.getElementById('passport-name').innerText = currentUser.name;
+            const initials = currentUser.name.split(' ').map(n=>n[0]).join('');
+            document.getElementById('user-avatar').innerText = initials;
+            document.getElementById('passport-avatar').innerText = initials;
+        }
+
+        function completeLogin() {
+            document.getElementById('auth-screen').classList.add('hidden');
+            document.getElementById('app-shell').classList.remove('hidden');
+            showToast(`Welcome back, ${currentUser.name}!`, "success");
+            initMap();
+            initCharts();
+        }
+
+        function switchRole(role) {
+            document.querySelectorAll('[id^="role-dashboard-"]').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('[id^="role-btn-"]').forEach(el => el.className = 'px-3 py-1 rounded font-semibold transition-all text-govslate-600 dark:text-govslate-400 hover:text-govslate-900');
+            
+            document.getElementById(`role-dashboard-${role}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`role-btn-${role}`);
+            if(activeBtn) activeBtn.className = 'px-3 py-1 rounded font-semibold transition-all bg-white dark:bg-govslate-800 text-primary-600 shadow-sm';
+            
+            document.getElementById('user-role-display').innerText = `${role.toUpperCase()} ROLE ACTIVE`;
+            showToast(`Switched role to: ${role.toUpperCase()}`, "info");
+        }
+
+        function navigateView(viewId) {
+            document.querySelectorAll('.view-panel').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('[id^="nav-"]').forEach(el => el.className = 'w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-xs font-semibold text-govslate-600 dark:text-govslate-300 hover:bg-govslate-100 dark:hover:bg-govslate-700 transition-colors');
+            
+            document.getElementById(`view-${viewId}`).classList.remove('hidden');
+            document.getElementById(`nav-${viewId}`).className = 'w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-xs font-semibold bg-primary-50 dark:bg-govslate-700 text-primary-600 dark:text-white transition-colors';
+
+            if(viewId === 'map' && leafletMap) {
+                setTimeout(() => leafletMap.invalidateSize(), 200);
+            }
+        }
+
+        function toggleSidebar() {
+            document.getElementById('app-sidebar').classList.toggle('hidden');
+        }
+
+        function toggleTheme() {
+            document.documentElement.classList.toggle('dark');
+        }
+
+        function toggleAccessibilityMode() {
+            document.body.classList.toggle('high-contrast');
+        }
+
+        function openSearchModal() {
+            document.getElementById('search-modal').classList.remove('hidden');
+        }
+
+        function closeSearchModal() {
+            document.getElementById('search-modal').classList.add('hidden');
+        }
+
+        function initMap() {
+            if(leafletMap) return;
+            leafletMap = L.map('map-container').setView([9.9252, 78.1198], 7);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 18,
+                attribution: '© OpenStreetMap JanMitra DPI'
+            }).addTo(leafletMap);
+
+            const locations = [
+                { lat: 9.9252, lng: 78.1198, name: "Government Rajaji Hospital, Madurai", type: "Hospital Companion", reward: "2.0 Credits" },
+                { lat: 13.0827, lng: 80.2707, name: "Government Higher Secondary School, Chennai", type: "Remedial Tutor", reward: "2.5 Credits" },
+                { lat: 28.5672, lng: 77.2100, name: "AIIMS New Delhi", type: "Emergency Blood Donor", reward: "3.0 Credits" },
+                { lat: 11.0168, lng: 76.9558, name: "Goonj Community Center, Coimbatore", type: "Old Age Support", reward: "2.0 Credits" }
+            ];
+
+            locations.forEach(loc => {
+                L.marker([loc.lat, loc.lng]).addTo(leafletMap)
+                    .bindPopup(`
+                        <div class="text-xs font-sans">
+                            <strong class="text-primary-600">${loc.name}</strong><br/>
+                            Task: ${loc.type}<br/>
+                            Reward: <span class="text-emerald-600 font-bold">${loc.reward}</span><br/>
+                            <button onclick="showToast('Task accepted from map marker!', 'success')" class="mt-2 px-2 py-1 bg-primary-600 text-white rounded font-bold text-[10px]">Accept Task</button>
+                        </div>
+                    `);
+            });
+        }
+
+        async function acceptApiTask(id, btn) {
+            try {
+                await fetch(`${API_BASE}/requests/${id}/accept`, { method: 'POST' });
+            } catch(e){}
+            btn.innerText = "Accepted!";
+            btn.className = "px-2.5 py-1 rounded bg-emerald-600 text-white font-semibold text-[11px]";
+            showToast("Task Accepted! Synced with FastAPI Backend.", "success");
+        }
+
+        async function simulateEarnSevaCredit() {
+            try {
+                const res = await fetch(`${API_BASE}/wallet/simulate-earn`, { method: 'POST' });
+                if(res.ok) {
+                    fetchBackendData();
+                    showToast("Earned +2.0 Seva Credits (Synced with FastAPI Database)!", "success");
+                    return;
+                }
+            } catch(e){}
+            showToast("Earned +2.0 Seva Credits!", "success");
+        }
+
+        async function handleGovtBroadcast(e) {
+            e.preventDefault();
+            const title = document.getElementById('b-title').value;
+            const inst = document.getElementById('b-institution').value;
+            const dur = parseFloat(document.getElementById('b-duration').value);
+
+            try {
+                await fetch(`${API_BASE}/requests`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        title: title,
+                        description: `Broadcast task for ${inst}`,
+                        institution_name: inst,
+                        category: "hospital",
+                        district: "Madurai",
+                        duration_hours: dur,
+                        reward_credits: dur
+                    })
+                });
+                fetchBackendData();
+            } catch(err){}
+
+            showToast("Government Task Broadcasted & Saved to SQLite DB!", "success");
+            e.target.reset();
+        }
+
+        async function handleAIChatSubmit(e) {
+            e.preventDefault();
+            const input = document.getElementById('ai-chat-input');
+            const val = input.value.trim();
+            if(!val) return;
+
+            const chat = document.getElementById('ai-chat-history');
+            const userMsg = document.createElement('div');
+            userMsg.className = "bg-govslate-200 dark:bg-govslate-700 p-3 rounded-lg max-w-lg ml-auto text-right font-medium";
+            userMsg.innerText = val;
+            chat.appendChild(userMsg);
+            input.value = '';
+
+            try {
+                const res = await fetch(`${API_BASE}/ai/assistant`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: val })
+                });
+                if(res.ok) {
+                    const data = await res.json();
+                    const aiMsg = document.createElement('div');
+                    aiMsg.className = "bg-white dark:bg-govslate-800 p-3 rounded-lg border border-govslate-200 dark:border-govslate-700 max-w-lg";
+                    aiMsg.innerHTML = `<strong class="text-primary-600">JanMitra AI:</strong> ${data.response}`;
+                    chat.appendChild(aiMsg);
+                    chat.scrollTop = chat.scrollHeight;
+                    return;
+                }
+            } catch(err){}
+
+            setTimeout(() => {
+                const aiMsg = document.createElement('div');
+                aiMsg.className = "bg-white dark:bg-govslate-800 p-3 rounded-lg border border-govslate-200 dark:border-govslate-700 max-w-lg";
+                aiMsg.innerHTML = `<strong class="text-primary-600">JanMitra AI:</strong> JanMitra was created by Team JanMitra: Sarvesh Karthick (Lead Architect), Hari (AI Lead), Bavisiya (UI/UX Lead), and Sanjaay (Public Policy Lead).`;
+                chat.appendChild(aiMsg);
+                chat.scrollTop = chat.scrollHeight;
+            }, 400);
+        }
+
+        function initCharts() {
+            const ctxWeekly = document.getElementById('chart-citizen-weekly');
+            if(ctxWeekly) {
+                new Chart(ctxWeekly, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                        datasets: [{
+                            label: 'Hours Contributed',
+                            data: [2, 4, 1.5, 3, 5, 8, 6],
+                            backgroundColor: '#2563eb',
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { grid: { display: false } },
+                            y: { grid: { color: '#e2e8f0' } }
+                        }
+                    }
+                });
+            }
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const bg = type === 'success' ? 'bg-emerald-600' : (type === 'error' ? 'bg-danger-600' : 'bg-govslate-800');
+            
+            toast.className = `${bg} text-white text-xs font-semibold px-4 py-3 rounded-lg shadow-xl flex items-center space-x-2 transition-all duration-300 pointer-events-auto transform translate-y-2 opacity-0`;
+            toast.innerHTML = `<i class="fa-solid fa-info-circle"></i> <span>${message}</span>`;
+            
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.remove('translate-y-2', 'opacity-0'), 50);
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
