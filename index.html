@@ -273,7 +273,7 @@
                     <div class="flex items-center justify-between text-[11px] text-govslate-500 dark:text-govslate-400">
                         <span>Status:</span>
                         <span id="backend-status-badge" class="text-emerald-600 dark:text-emerald-400 font-bold flex items-center">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1 animate-pulse"></span> Vercel Live
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1 animate-pulse"></span> Vercel Live CDN
                         </span>
                     </div>
                 </div>
@@ -357,7 +357,7 @@
 
                         <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
                             <div class="bg-white dark:bg-govslate-800 p-5 rounded-xl border border-govslate-200 dark:border-govslate-700 shadow-sm">
-                                <div class="text-xs font-semibold text-govslate-50">Total District Volunteers</div>
+                                <div class="text-xs font-semibold text-govslate-500">Total District Volunteers</div>
                                 <div class="text-2xl font-black text-govslate-900 dark:text-white mt-2">52,430</div>
                                 <div class="text-[11px] text-emerald-600 font-medium mt-1">94.2% Verified</div>
                             </div>
@@ -616,7 +616,7 @@
 
         async function fetchBackendData() {
             try {
-                const res = await fetch('/api/requests');
+                const res = await fetch('/data/requests.json');
                 if(res.ok) {
                     const reqs = await res.json();
                     renderRequests(reqs);
@@ -628,7 +628,7 @@
             }
 
             try {
-                const ledgerRes = await fetch('/api/wallet/ledger');
+                const ledgerRes = await fetch('/data/wallet-ledger.json');
                 if(ledgerRes.ok) {
                     const ledger = await ledgerRes.json();
                     renderWalletLedger(ledger);
