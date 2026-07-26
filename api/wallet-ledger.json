@@ -1,0 +1,38 @@
+{
+  "balance": 150.0,
+  "transactions": [
+    {
+      "id": 1,
+      "activity_name": "Remedial Math Mentorship",
+      "institution_name": "Govt HSS Chennai",
+      "category": "Education",
+      "credits_amount": 2.0,
+      "transaction_type": "earned",
+      "digilocker_tx_hash": "0x7f8a9b2c3d4e5f6a",
+      "status": "verified",
+      "date": "Today"
+    },
+    {
+      "id": 2,
+      "activity_name": "AIIMS OPD Companion",
+      "institution_name": "AIIMS New Delhi",
+      "category": "Healthcare",
+      "credits_amount": 5.0,
+      "transaction_type": "earned",
+      "digilocker_tx_hash": "0x1a2b3c4d5e6f7a8b",
+      "status": "verified",
+      "date": "Yesterday"
+    },
+    {
+      "id": 3,
+      "activity_name": "Redeemed: Grocery Delivery",
+      "institution_name": "JanMitra Express",
+      "category": "Personal Aid",
+      "credits_amount": 1.0,
+      "transaction_type": "spent",
+      "digilocker_tx_hash": "0x9e8d7c6b5a4f3e2d",
+      "status": "settled",
+      "date": "22 Jul 2026"
+    }
+  ]
+}

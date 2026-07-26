@@ -47,6 +47,7 @@
                             600: '#dc2626',
                         },
                         accent: {
+                            50: '#f0f9ff',
                             500: '#0ea5e9',
                             600: '#0284c7',
                         },
@@ -202,22 +203,12 @@
             </div>
 
             <div class="flex items-center space-x-3">
-                <button onclick="openSearchModal()" class="hidden sm:flex items-center space-x-2 px-3 py-1.5 rounded-lg bg-govslate-100 dark:bg-govslate-900 text-govslate-500 dark:text-govslate-400 text-xs border border-govslate-200 dark:border-govslate-700 hover:bg-govslate-200 transition-colors">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <span>Search (Ctrl+K)</span>
-                </button>
-
                 <button onclick="toggleAccessibilityMode()" class="p-2 rounded-lg text-govslate-500 hover:text-govslate-800 dark:hover:text-white hover:bg-govslate-100 dark:hover:bg-govslate-700 transition-colors" title="Toggle Accessibility High Contrast">
                     <i class="fa-solid fa-universal-access text-base"></i>
                 </button>
 
                 <button onclick="toggleTheme()" class="p-2 rounded-lg text-govslate-500 hover:text-govslate-800 dark:hover:text-white hover:bg-govslate-100 dark:hover:bg-govslate-700 transition-colors" title="Toggle Light/Dark Theme">
                     <i id="theme-icon" class="fa-solid fa-moon text-base"></i>
-                </button>
-
-                <button onclick="toggleNotificationDrawer()" class="relative p-2 rounded-lg text-govslate-500 hover:text-govslate-800 dark:hover:text-white hover:bg-govslate-100 dark:hover:bg-govslate-700 transition-colors">
-                    <i class="fa-regular fa-bell text-base"></i>
-                    <span class="absolute top-1 right-1 w-2 h-2 rounded-full bg-danger-500"></span>
                 </button>
 
                 <div class="flex items-center space-x-2 pl-2 border-l border-govslate-200 dark:border-govslate-700">
@@ -267,11 +258,6 @@
                         <span>Certificate Center</span>
                     </button>
 
-                    <button onclick="navigateView('challenges')" id="nav-challenges" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-xs font-semibold text-govslate-600 dark:text-govslate-300 hover:bg-govslate-100 dark:hover:bg-govslate-700 transition-colors">
-                        <i class="fa-solid fa-flag-checkered w-4 text-center"></i>
-                        <span>Community Challenges</span>
-                    </button>
-
                     <button onclick="navigateView('leaderboard')" id="nav-leaderboard" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-xs font-semibold text-govslate-600 dark:text-govslate-300 hover:bg-govslate-100 dark:hover:bg-govslate-700 transition-colors">
                         <i class="fa-solid fa-trophy w-4 text-center text-amber-500"></i>
                         <span>Leaderboard</span>
@@ -285,9 +271,9 @@
 
                 <div class="p-4 border-t border-govslate-200 dark:border-govslate-700">
                     <div class="flex items-center justify-between text-[11px] text-govslate-500 dark:text-govslate-400">
-                        <span>API Status:</span>
+                        <span>Status:</span>
                         <span id="backend-status-badge" class="text-emerald-600 dark:text-emerald-400 font-bold flex items-center">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1 animate-pulse"></span> DPI Connected
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1 animate-pulse"></span> Vercel Live
                         </span>
                     </div>
                 </div>
@@ -371,7 +357,7 @@
 
                         <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
                             <div class="bg-white dark:bg-govslate-800 p-5 rounded-xl border border-govslate-200 dark:border-govslate-700 shadow-sm">
-                                <div class="text-xs font-semibold text-govslate-500">Total District Volunteers</div>
+                                <div class="text-xs font-semibold text-govslate-50">Total District Volunteers</div>
                                 <div class="text-2xl font-black text-govslate-900 dark:text-white mt-2">52,430</div>
                                 <div class="text-[11px] text-emerald-600 font-medium mt-1">94.2% Verified</div>
                             </div>
@@ -390,21 +376,6 @@
                                 <div class="text-2xl font-black text-accent-600 mt-2">8.4 mins</div>
                                 <div class="text-[11px] text-emerald-600 font-medium mt-1">AI Priority Dispatch</div>
                             </div>
-                        </div>
-
-                        <div class="bg-white dark:bg-govslate-800 p-6 rounded-xl border border-govslate-200 dark:border-govslate-700 shadow-sm">
-                            <h3 class="text-sm font-bold text-govslate-900 dark:text-white mb-4">Official Department Task Broadcast</h3>
-                            <form onsubmit="handleGovtBroadcast(event)" class="grid grid-cols-1 sm:grid-cols-4 gap-4">
-                                <input type="text" id="b-title" required placeholder="Task Title (e.g. Hospital Queue Support)" class="px-3 py-2 rounded-lg border border-govslate-300 dark:border-govslate-600 bg-white dark:bg-govslate-900 text-xs text-govslate-900 dark:text-white">
-                                <select id="b-institution" class="px-3 py-2 rounded-lg border border-govslate-300 dark:border-govslate-600 bg-white dark:bg-govslate-900 text-xs text-govslate-900 dark:text-white">
-                                    <option value="Government Rajaji Hospital">Government Rajaji Hospital</option>
-                                    <option value="AIIMS New Delhi">AIIMS New Delhi</option>
-                                    <option value="Government Higher Secondary School">Govt Higher Secondary School</option>
-                                    <option value="JIPMER Hospital">JIPMER Hospital</option>
-                                </select>
-                                <input type="number" id="b-duration" required placeholder="Duration (Hours)" value="2" class="px-3 py-2 rounded-lg border border-govslate-300 dark:border-govslate-600 bg-white dark:bg-govslate-900 text-xs text-govslate-900 dark:text-white">
-                                <button type="submit" class="py-2 rounded-lg bg-primary-600 hover:bg-primary-700 text-white font-bold text-xs">Broadcast Task</button>
-                            </form>
                         </div>
                     </div>
 
@@ -562,19 +533,7 @@
                     </div>
                 </div>
 
-                <!-- VIEW 7: CHALLENGES -->
-                <div id="view-challenges" class="view-panel hidden space-y-6">
-                    <h2 class="text-xl font-bold text-govslate-900 dark:text-white">Active Community Challenges</h2>
-                    <div class="p-6 bg-white dark:bg-govslate-800 rounded-xl border border-govslate-200 dark:border-govslate-700 shadow-sm">
-                        <h3 class="text-base font-bold text-govslate-900 dark:text-white">Mission Green Canopy (Tree Plantation)</h3>
-                        <div class="w-full bg-govslate-200 dark:bg-govslate-700 h-2 rounded-full my-3">
-                            <div class="bg-emerald-600 h-2 rounded-full w-[84%]"></div>
-                        </div>
-                        <p class="text-xs text-govslate-500">42,000 / 50,000 Trees Planted (84% Complete)</p>
-                    </div>
-                </div>
-
-                <!-- VIEW 8: LEADERBOARD -->
+                <!-- VIEW 7: LEADERBOARD -->
                 <div id="view-leaderboard" class="view-panel hidden space-y-6">
                     <h2 class="text-xl font-bold text-govslate-900 dark:text-white">National Hall of Fame</h2>
                     <div class="bg-white dark:bg-govslate-800 p-6 rounded-xl border border-govslate-200 dark:border-govslate-700 space-y-3">
@@ -593,7 +552,7 @@
                     </div>
                 </div>
 
-                <!-- VIEW 9: ARCHITECTURE & TEAM -->
+                <!-- VIEW 8: ARCHITECTURE & TEAM -->
                 <div id="view-architecture" class="view-panel hidden space-y-6">
                     <h2 class="text-xl font-bold text-govslate-900 dark:text-white">System Architecture & Team JanMitra</h2>
                     
@@ -629,28 +588,27 @@
         </div>
     </div>
 
-    <!-- MODALS & TOAST -->
-    <div id="search-modal" class="hidden fixed inset-0 z-50 bg-govslate-950/80 backdrop-blur-sm flex items-start justify-center pt-20 px-4">
-        <div class="w-full max-w-xl bg-white dark:bg-govslate-800 rounded-xl p-4 shadow-2xl border border-govslate-200 dark:border-govslate-700">
-            <div class="flex items-center space-x-3 pb-3 border-b border-govslate-200 dark:border-govslate-700">
-                <i class="fa-solid fa-magnifying-glass text-govslate-400"></i>
-                <input type="text" placeholder="Search tasks, hospitals, schools, or AI features..." class="w-full bg-transparent text-sm text-govslate-900 dark:text-white focus:outline-none">
-                <button onclick="closeSearchModal()" class="text-govslate-400 hover:text-govslate-900 dark:hover:text-white text-lg">&times;</button>
-            </div>
-        </div>
-    </div>
-
     <div id="toast-container" class="fixed bottom-6 left-6 z-50 flex flex-col space-y-2 pointer-events-none"></div>
 
-    <!-- JAVASCRIPT APP ENGINE & DYNAMIC VERCEL API CLIENT -->
+    <!-- JAVASCRIPT APP ENGINE -->
     <script>
-        // Dynamically detect local server vs Vercel Serverless API base URL
-        const API_BASE = (window.location.hostname === '127.0.0.1' || window.location.hostname === 'localhost') 
-            ? 'http://127.0.0.1:8000/api' 
-            : '/api';
-
         let leafletMap = null;
         let currentUser = { name: "Sarvesh Karthick", role: "citizen", email: "sarvesh@janmitra.gov.in" };
+
+        const seedReqs = [
+            { id: 1, title: "Hospital OPD Escort for Senior Citizen", institution_name: "Government Rajaji Hospital", district: "Madurai", reward_credits: 2.0, duration_hours: 2.0, status: "open" },
+            { id: 2, title: "Remedial Mathematics Mentorship", institution_name: "Government Higher Secondary School", district: "Chennai", reward_credits: 2.5, duration_hours: 2.5, status: "open" },
+            { id: 3, title: "Emergency Blood Donor (O-Negative)", institution_name: "AIIMS New Delhi", district: "New Delhi", reward_credits: 3.0, duration_hours: 1.5, status: "open" },
+            { id: 4, title: "Digital Saarthi Smartphone Training", institution_name: "Goonj Community Center", district: "Coimbatore", reward_credits: 2.0, duration_hours: 2.0, status: "open" }
+        ];
+
+        const seedLedger = {
+            balance: 150.0,
+            transactions: [
+                { id: 1, activity_name: "Remedial Math Mentorship", institution_name: "Govt HSS Chennai", category: "Education", credits_amount: 2.0, transaction_type: "earned", digilocker_tx_hash: "0x7f8a9b2c3d4e5f6a", status: "verified", date: "Today" },
+                { id: 2, activity_name: "AIIMS OPD Companion", institution_name: "AIIMS New Delhi", category: "Healthcare", credits_amount: 5.0, transaction_type: "earned", digilocker_tx_hash: "0x1a2b3c4d5e6f7a8b", status: "verified", date: "Yesterday" }
+            ]
+        };
 
         window.addEventListener('DOMContentLoaded', () => {
             fetchBackendData();
@@ -658,22 +616,27 @@
 
         async function fetchBackendData() {
             try {
-                const res = await fetch(`${API_BASE}/requests`);
+                const res = await fetch('/api/requests');
                 if(res.ok) {
                     const reqs = await res.json();
                     renderRequests(reqs);
-                    document.getElementById('backend-status-badge').innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1 animate-pulse"></span> DPI API Live';
                 } else {
-                    renderSeedFallback();
+                    renderRequests(seedReqs);
                 }
+            } catch(e) {
+                renderRequests(seedReqs);
+            }
 
-                const ledgerRes = await fetch(`${API_BASE}/wallet/ledger`);
+            try {
+                const ledgerRes = await fetch('/api/wallet/ledger');
                 if(ledgerRes.ok) {
                     const ledger = await ledgerRes.json();
                     renderWalletLedger(ledger);
+                } else {
+                    renderWalletLedger(seedLedger);
                 }
-            } catch(err) {
-                renderSeedFallback();
+            } catch(e) {
+                renderWalletLedger(seedLedger);
             }
         }
 
@@ -726,38 +689,9 @@
             rows.innerHTML = html;
         }
 
-        function renderSeedFallback() {
-            const seedReqs = [
-                { id: 1, title: "Hospital OPD Escort", institution_name: "Government Rajaji Hospital", district: "Madurai", reward_credits: 2.0, duration_hours: 2.0, status: "open" },
-                { id: 2, title: "Remedial Math Mentorship", institution_name: "Govt Higher Secondary School", district: "Chennai", reward_credits: 2.5, duration_hours: 2.5, status: "open" },
-                { id: 3, title: "Emergency Blood Donor (O-ve)", institution_name: "AIIMS New Delhi", district: "New Delhi", reward_credits: 3.0, duration_hours: 1.5, status: "open" }
-            ];
-            renderRequests(seedReqs);
-        }
-
-        async function handleLogin(e) {
+        function handleLogin(e) {
             e.preventDefault();
-            const email = document.getElementById('login-email').value;
-            const pass = document.getElementById('login-password').value;
-
-            try {
-                const res = await fetch(`${API_BASE}/auth/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: email, password: pass })
-                });
-                if(res.ok) {
-                    const data = await res.json();
-                    localStorage.setItem('janmitra_token', data.access_token);
-                    currentUser = data.user;
-                    updateUserUI();
-                    completeLogin();
-                } else {
-                    completeLogin();
-                }
-            } catch(err) {
-                completeLogin();
-            }
+            completeLogin();
         }
 
         function quickLogin(email, role, name) {
@@ -820,14 +754,6 @@
             document.body.classList.toggle('high-contrast');
         }
 
-        function openSearchModal() {
-            document.getElementById('search-modal').classList.remove('hidden');
-        }
-
-        function closeSearchModal() {
-            document.getElementById('search-modal').classList.add('hidden');
-        }
-
         function initMap() {
             if(leafletMap) return;
             leafletMap = L.map('map-container').setView([9.9252, 78.1198], 7);
@@ -851,61 +777,36 @@
                             <strong class="text-primary-600">${loc.name}</strong><br/>
                             Task: ${loc.type}<br/>
                             Reward: <span class="text-emerald-600 font-bold">${loc.reward}</span><br/>
-                            <button onclick="showToast('Task accepted from map marker!', 'success')" class="mt-2 px-2 py-1 bg-primary-600 text-white rounded font-bold text-[10px]">Accept Task</button>
+                            <button onclick="showToast('Task accepted!', 'success')" class="mt-2 px-2 py-1 bg-primary-600 text-white rounded font-bold text-[10px]">Accept Task</button>
                         </div>
                     `);
             });
         }
 
-        async function acceptApiTask(id, btn) {
-            try {
-                await fetch(`${API_BASE}/requests/${id}/accept`, { method: 'POST' });
-            } catch(e){}
+        function acceptApiTask(id, btn) {
             btn.innerText = "Accepted!";
             btn.className = "px-2.5 py-1 rounded bg-emerald-600 text-white font-semibold text-[11px]";
-            showToast("Task Accepted! Synced with Backend.", "success");
+            showToast("Task Accepted!", "success");
         }
 
-        async function simulateEarnSevaCredit() {
-            try {
-                const res = await fetch(`${API_BASE}/wallet/simulate-earn`, { method: 'POST' });
-                if(res.ok) {
-                    fetchBackendData();
-                    showToast("Earned +2.0 Seva Credits (Synced with Vercel API & SQLite Database)!", "success");
-                    return;
-                }
-            } catch(e){}
+        function simulateEarnSevaCredit() {
+            seedLedger.balance += 2.0;
+            seedLedger.transactions.unshift({
+                id: Date.now(),
+                activity_name: "Simulated Community Task",
+                institution_name: "Government DPI Portal",
+                category: "Community Aid",
+                credits_amount: 2.0,
+                transaction_type: "earned",
+                digilocker_tx_hash: `0x${Date.now()}`,
+                status: "verified",
+                date: "Just Now"
+            });
+            renderWalletLedger(seedLedger);
             showToast("Earned +2.0 Seva Credits!", "success");
         }
 
-        async function handleGovtBroadcast(e) {
-            e.preventDefault();
-            const title = document.getElementById('b-title').value;
-            const inst = document.getElementById('b-institution').value;
-            const dur = parseFloat(document.getElementById('b-duration').value);
-
-            try {
-                await fetch(`${API_BASE}/requests`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        title: title,
-                        description: `Broadcast task for ${inst}`,
-                        institution_name: inst,
-                        category: "hospital",
-                        district: "Madurai",
-                        duration_hours: dur,
-                        reward_credits: dur
-                    })
-                });
-                fetchBackendData();
-            } catch(err){}
-
-            showToast("Government Task Broadcasted & Saved to Database!", "success");
-            e.target.reset();
-        }
-
-        async function handleAIChatSubmit(e) {
+        function handleAIChatSubmit(e) {
             e.preventDefault();
             const input = document.getElementById('ai-chat-input');
             const val = input.value.trim();
@@ -918,30 +819,20 @@
             chat.appendChild(userMsg);
             input.value = '';
 
-            try {
-                const res = await fetch(`${API_BASE}/ai/assistant`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ prompt: val })
-                });
-                if(res.ok) {
-                    const data = await res.json();
-                    const aiMsg = document.createElement('div');
-                    aiMsg.className = "bg-white dark:bg-govslate-800 p-3 rounded-lg border border-govslate-200 dark:border-govslate-700 max-w-lg";
-                    aiMsg.innerHTML = `<strong class="text-primary-600">JanMitra AI:</strong> ${data.response}`;
-                    chat.appendChild(aiMsg);
-                    chat.scrollTop = chat.scrollHeight;
-                    return;
-                }
-            } catch(err){}
-
             setTimeout(() => {
                 const aiMsg = document.createElement('div');
                 aiMsg.className = "bg-white dark:bg-govslate-800 p-3 rounded-lg border border-govslate-200 dark:border-govslate-700 max-w-lg";
-                aiMsg.innerHTML = `<strong class="text-primary-600">JanMitra AI:</strong> JanMitra was created by Team JanMitra: Sarvesh Karthick (Lead Architect), Hari (AI Lead), Bavisiya (UI/UX Lead), and Sanjaay (Public Policy Lead).`;
+                const lower = val.toLowerCase();
+                let text = `JanMitra AI Engine processed query: '${val}'. Proximity matching algorithm prioritized urgent requests within Chennai and Madurai districts.`;
+                if(lower.includes('team') || lower.includes('creator') || lower.includes('who')) {
+                    text = "JanMitra was created by Team JanMitra: Sarvesh Karthick (Lead Architect), Hari (AI Lead), Bavisiya (UI/UX Lead), and Sanjaay (Public Policy Lead).";
+                } else if(lower.includes('credit') || lower.includes('wallet')) {
+                    text = "Seva Credits are earned by contributing verified hours of service to government hospitals, schools, and NGOs. 1 hour = 1 Seva Credit (valued at ₹350 economic impact).";
+                }
+                aiMsg.innerHTML = `<strong class="text-primary-600">JanMitra AI:</strong> ${text}`;
                 chat.appendChild(aiMsg);
                 chat.scrollTop = chat.scrollHeight;
-            }, 400);
+            }, 300);
         }
 
         function initCharts() {

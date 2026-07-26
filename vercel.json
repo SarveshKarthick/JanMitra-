@@ -1,8 +1,16 @@
 {
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "/api/index.js"
+      "source": "/api/requests",
+      "destination": "/api/requests.json"
+    },
+    {
+      "source": "/api/wallet/ledger",
+      "destination": "/api/wallet-ledger.json"
+    },
+    {
+      "source": "/api/team",
+      "destination": "/api/team.json"
     }
   ]
 }

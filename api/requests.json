@@ -1,0 +1,54 @@
+[
+  {
+    "id": 1,
+    "title": "Hospital OPD Escort for Senior Citizen",
+    "description": "Escort senior citizen through OPD queues",
+    "institution_name": "Government Rajaji Hospital",
+    "category": "hospital",
+    "district": "Madurai",
+    "location_lat": 9.9252,
+    "location_lng": 78.1198,
+    "duration_hours": 2.0,
+    "reward_credits": 2.0,
+    "status": "open"
+  },
+  {
+    "id": 2,
+    "title": "Remedial Mathematics Mentorship",
+    "description": "Teach Class 6 students remedial math",
+    "institution_name": "Government Higher Secondary School",
+    "category": "school",
+    "district": "Chennai",
+    "location_lat": 13.0827,
+    "location_lng": 80.2707,
+    "duration_hours": 2.5,
+    "reward_credits": 2.5,
+    "status": "open"
+  },
+  {
+    "id": 3,
+    "title": "Emergency Blood Donor (O-Negative)",
+    "description": "Urgent blood requirement for trauma patient",
+    "institution_name": "AIIMS New Delhi",
+    "category": "blood",
+    "district": "New Delhi",
+    "location_lat": 28.5672,
+    "location_lng": 77.21,
+    "duration_hours": 1.5,
+    "reward_credits": 3.0,
+    "status": "open"
+  },
+  {
+    "id": 4,
+    "title": "Digital Saarthi Smartphone Training",
+    "description": "Assist elderly residents with UPI & DigiLocker",
+    "institution_name": "Goonj Community Center",
+    "category": "senior",
+    "district": "Coimbatore",
+    "location_lat": 11.0168,
+    "location_lng": 76.9558,
+    "duration_hours": 2.0,
+    "reward_credits": 2.0,
+    "status": "open"
+  }
+]
