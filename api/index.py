@@ -3,9 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import create_engine, Column, Integer, String, Float, Boolean, Text
 from sqlalchemy.orm import declarative_base, sessionmaker, Session
 from pydantic import BaseModel
-from typing import Optional
 
-# Safe SQLite database for Vercel Serverless Function (/tmp or in-memory)
 DATABASE_URL = "sqlite:////tmp/janmitra_vercel.db"
 
 try:
@@ -53,8 +51,8 @@ try:
         status = Column(String, default="verified")
 
     Base.metadata.create_all(bind=engine)
-except Exception as e:
-    print("Database init exception:", str(e))
+except Exception:
+    pass
 
 def get_db():
     db = SessionLocal()
@@ -63,7 +61,6 @@ def get_db():
     finally:
         db.close()
 
-# Seed database on serverless cold start
 def seed_data():
     try:
         db = SessionLocal()
@@ -90,12 +87,11 @@ def seed_data():
             db.add_all(txs)
             db.commit()
         db.close()
-    except Exception as e:
-        print("Seed error:", str(e))
+    except Exception:
+        pass
 
 seed_data()
 
-# Export 'app' for Vercel Serverless Function
 app = FastAPI(title="JanMitra Vercel Function")
 
 app.add_middleware(
@@ -118,12 +114,13 @@ class RequestCreate(BaseModel):
 class AIChatQuery(BaseModel):
     prompt: str
 
+@app.get("/")
 @app.get("/api")
 def root():
     return {
         "status": "online",
         "service": "JanMitra DPI Platform",
-        "environment": "Vercel Serverless",
+        "environment": "Vercel Zero Config Serverless",
         "team": ["Sarvesh Karthick", "Hari", "Bavisiya", "Sanjaay"]
     }
 
