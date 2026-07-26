@@ -1,0 +1,9 @@
+{
+  "team_name": "Team JanMitra",
+  "members": [
+    { "name": "Sarvesh Karthick", "role": "Lead Architect & Full Stack Developer" },
+    { "name": "Hari", "role": "Lead AI Engineer" },
+    { "name": "Bavisiya", "role": "Senior UI/UX Designer" },
+    { "name": "Sanjaay", "role": "Public Policy & Systems Lead" }
+  ]
+}
